@@ -9,13 +9,33 @@ interface InvitationStepProps {
   onAccept: () => void;
 }
 
+const FUNNY_NO_PHRASES = [
+  "¿segura? 🥺",
+  "¿en serio? 💔",
+  "no seas mala... 😢",
+  "¡daleeee! 🙏",
+  "pensalo bien... 🧐",
+  "¿te cojo? 🍦",
+  "te convengo 😏",
+  "me rompes el corazón 💔",
+  "¿tan feo soy? 😂",
+  "¡decí que sí! 🥺",
+  "no seas vueltera 😤",
+  "¡porfa porfa! 🥺"
+];
+
 export default function InvitationStep({ onAccept }: InvitationStepProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [noButtonPosition, setNoButtonPosition] = useState({ x: 0, y: 0 });
   const [isSwapped, setIsSwapped] = useState(false);
-  const [noTouchCount, setNoTouchCount] = useState(0);
+  const [dodgeCount, setDodgeCount] = useState(0);
+  const [particles, setParticles] = useState<{ id: number; x: number; y: number; size: number; color: string }[]>([]);
+  const [currentNoText, setCurrentNoText] = useState("no quiero");
 
   const handleNoDodge = () => {
+    const currentX = noButtonPosition.x;
+    const currentY = noButtonPosition.y;
+
     // Jump in a random angle (0 to 360 degrees) by a distance of 70px to 150px
     const angle = Math.random() * Math.PI * 2;
     const distance = Math.random() * 80 + 70; // min 70px, max 150px
@@ -23,34 +43,78 @@ export default function InvitationStep({ onAccept }: InvitationStepProps) {
     const newY = Math.sin(angle) * distance;
 
     setNoButtonPosition({ x: newX, y: newY });
+
+    // Choose new random text!
+    setCurrentNoText((prevText) => {
+      const filtered = FUNNY_NO_PHRASES.filter((p) => p !== prevText);
+      const randomIndex = Math.floor(Math.random() * filtered.length);
+      return filtered[randomIndex];
+    });
+
+    // Spawn trail particles!
+    const baseOffset = isSwapped ? -75 : 75;
+    const startX = baseOffset + currentX;
+    const startY = 32 + currentY;
+    const endX = baseOffset + newX;
+    const endY = 32 + newY;
+
+    const steps = 12; // 12 particles along the path
+    const newParticles: { id: number; x: number; y: number; size: number; color: string }[] = [];
+    const now = Date.now();
+
+    const colors = ["#f59e0b", "#fbbf24", "#fef08a", "#a78bfa", "#f472b6"]; // gold, yellow, light yellow, purple, pink
+
+    for (let i = 0; i <= steps; i++) {
+      const ratio = i / steps;
+      // Add slight random jitter to particle positions
+      const jitterX = (Math.random() - 0.5) * 15;
+      const jitterY = (Math.random() - 0.5) * 15;
+      
+      const x = startX + (endX - startX) * ratio + jitterX;
+      const y = startY + (endY - startY) * ratio + jitterY;
+      
+      const size = Math.random() * 6 + 4; // size between 4px and 10px
+      const color = colors[Math.floor(Math.random() * colors.length)];
+
+      newParticles.push({
+        id: now + i + Math.random(),
+        x,
+        y,
+        size,
+        color,
+      });
+    }
+
+    setParticles((prev) => [...prev, ...newParticles]);
+  };
+
+  const removeParticle = (id: number) => {
+    setParticles((prev) => prev.filter((p) => p.id !== id));
   };
 
   const handleNoSwap = () => {
     // Swap buttons and reset current evasion coordinates so they swap cleanly
     setIsSwapped((prev) => !prev);
     setNoButtonPosition({ x: 0, y: 0 });
+    setDodgeCount(0); // Reset the count on swap
+    setCurrentNoText("no quiero"); // Reset text on swap
   };
 
-  const handleNoTouch = (e: React.TouchEvent) => {
-    e.preventDefault(); // Prevent standard click behavior on touch devices to avoid double execution
-    const nextCount = noTouchCount + 1;
-    setNoTouchCount(nextCount);
-
-    if (nextCount % 4 === 0) {
-      handleNoSwap();
-    } else {
-      handleNoDodge();
+  const handleNoInteraction = (e?: React.SyntheticEvent) => {
+    if (e && e.type === "touchstart") {
+      e.preventDefault(); // Prevent standard click behavior on touch devices to avoid double execution
     }
-  };
 
-  const handleNoHover = () => {
-    handleNoDodge();
-  };
-
-  const handleNoClick = () => {
-    // Standard click handler (e.g. keyboard navigation or desktop click)
-    handleNoSwap();
-    setNoTouchCount(0); // Reset touch count upon a clean swap
+    setDodgeCount((prev) => {
+      const nextCount = prev + 1;
+      if (nextCount >= 3) {
+        handleNoSwap();
+        return 0;
+      } else {
+        handleNoDodge();
+        return nextCount;
+      }
+    });
   };
 
   return (
@@ -158,6 +222,32 @@ export default function InvitationStep({ onAccept }: InvitationStepProps) {
 
                 {/* Action Buttons Container */}
                 <div className="mt-8 relative w-full h-16 max-w-sm mx-auto">
+                  {/* Particles Trail */}
+                  {particles.map((p) => (
+                    <motion.div
+                      key={p.id}
+                      initial={{ opacity: 1, scale: 1, x: p.x, y: p.y }}
+                      animate={{ 
+                        opacity: 0, 
+                        scale: 0, 
+                        y: p.y - (Math.random() * 30 + 10), // float upwards
+                        x: p.x + (Math.random() - 0.5) * 20 // drift horizontally
+                      }}
+                      transition={{ duration: Math.random() * 0.4 + 0.6, ease: "easeOut" }}
+                      onAnimationComplete={() => removeParticle(p.id)}
+                      className="absolute pointer-events-none rounded-full z-20"
+                      style={{
+                        width: p.size,
+                        height: p.size,
+                        backgroundColor: p.color,
+                        boxShadow: `0 0 ${p.size * 1.5}px ${p.color}`,
+                        left: "50%",
+                        top: 0,
+                        transform: "translate(-50%, -50%)",
+                      }}
+                    />
+                  ))}
+
                   {/* BUTTON A (Left by default) */}
                   <motion.button
                     animate={{
@@ -165,9 +255,9 @@ export default function InvitationStep({ onAccept }: InvitationStepProps) {
                       y: isSwapped ? noButtonPosition.y : 0,
                     }}
                     transition={{ type: "spring", stiffness: 350, damping: 18 }}
-                    onMouseEnter={isSwapped ? handleNoHover : undefined}
-                    onTouchStart={isSwapped ? handleNoTouch : undefined}
-                    onClick={isSwapped ? handleNoClick : onAccept}
+                    onMouseEnter={isSwapped ? handleNoInteraction : undefined}
+                    onTouchStart={isSwapped ? handleNoInteraction : undefined}
+                    onClick={isSwapped ? handleNoInteraction : onAccept}
                     className={`absolute left-1/2 -translate-x-[115%] px-6 py-3.5 rounded-2xl transition-colors duration-200 text-md cursor-pointer select-none whitespace-nowrap
                       ${isSwapped 
                         ? "bg-slate-50 hover:bg-slate-100 text-love-primary border border-indigo-100 font-semibold z-0" 
@@ -176,7 +266,7 @@ export default function InvitationStep({ onAccept }: InvitationStepProps) {
                     `}
                   >
                     {!isSwapped && <Check className="w-4.5 h-4.5 inline-block mr-1.5 align-text-bottom" />}
-                    {isSwapped ? "no quiero" : "¡Sí, de una!"}
+                    {isSwapped ? currentNoText : "¡Sí, de una!"}
                   </motion.button>
 
                   {/* BUTTON B (Right by default) */}
@@ -186,9 +276,9 @@ export default function InvitationStep({ onAccept }: InvitationStepProps) {
                       y: !isSwapped ? noButtonPosition.y : 0,
                     }}
                     transition={{ type: "spring", stiffness: 350, damping: 18 }}
-                    onMouseEnter={!isSwapped ? handleNoHover : undefined}
-                    onTouchStart={!isSwapped ? handleNoTouch : undefined}
-                    onClick={!isSwapped ? handleNoClick : onAccept}
+                    onMouseEnter={!isSwapped ? handleNoInteraction : undefined}
+                    onTouchStart={!isSwapped ? handleNoInteraction : undefined}
+                    onClick={!isSwapped ? handleNoInteraction : onAccept}
                     className={`absolute left-1/2 translate-x-[15%] px-6 py-3.5 rounded-2xl transition-colors duration-200 text-md cursor-pointer select-none whitespace-nowrap
                       ${!isSwapped 
                         ? "bg-slate-50 hover:bg-slate-100 text-love-primary border border-indigo-100 font-semibold z-0" 
@@ -197,7 +287,7 @@ export default function InvitationStep({ onAccept }: InvitationStepProps) {
                     `}
                   >
                     {isSwapped && <Check className="w-4.5 h-4.5 inline-block mr-1.5 align-text-bottom" />}
-                    {!isSwapped ? "no quiero" : "¡Sí, de una!"}
+                    {!isSwapped ? currentNoText : "¡Sí, de una!"}
                   </motion.button>
                 </div>
               </motion.div>

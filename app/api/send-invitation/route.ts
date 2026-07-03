@@ -3,9 +3,9 @@ import { Resend } from "resend";
 
 export async function POST(request: Request) {
   try {
-    const { date, time, location, receiverName, senderName } = await request.json();
+    const { date, time, location, receiverName, senderName, selections } = await request.json();
 
-    if (!date || !time || !location) {
+    if (!location || (!selections && (!date || !time))) {
       return NextResponse.json(
         { error: "Faltan campos obligatorios (fecha, hora o locación)" },
         { status: 400 }
@@ -24,8 +24,18 @@ export async function POST(request: Request) {
       console.log(`Para: ${receiverName}`);
       console.log(`Enviar alerta a: ${emailTo}`);
       console.log("---------------------------------------------");
-      console.log(`📅 FECHA: ${date}`);
-      console.log(`⏰ HORA:  ${time} hs`);
+      
+      if (selections && Array.isArray(selections)) {
+        selections.forEach((sel: any, idx: number) => {
+          console.log(`📍 Opción ${idx + 1}:`);
+          console.log(`   📅 FECHA: ${sel.date}`);
+          console.log(`   ⏰ HORA:  ${sel.time}`);
+        });
+      } else {
+        console.log(`📅 FECHA: ${date}`);
+        console.log(`⏰ HORA:  ${time} hs`);
+      }
+      
       console.log(`📍 LUGAR: ${location}`);
       console.log("=============================================\n");
 
@@ -42,10 +52,44 @@ export async function POST(request: Request) {
     // Real Resend Integration
     const resend = new Resend(apiKey);
 
+    let detailsHtml = "";
+    if (selections && Array.isArray(selections)) {
+      detailsHtml = selections
+        .map(
+          (sel: { date: string; time: string }, idx: number) => `
+          <tr>
+            <td colspan="2" style="padding: 12px 0 6px 0; font-weight: bold; color: #8b5cf6; font-size: 14px; border-bottom: 1px dashed #e0e7ff;">
+              ✨ Opción ${idx + 1}:
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 6px 0; font-weight: bold; width: 120px; color: #4f46e5; font-size: 14px;">📅 Fecha:</td>
+            <td style="padding: 6px 0; color: #1e1b4b; font-size: 14px;">${sel.date}</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #f0f4ff;">
+            <td style="padding: 6px 0; font-weight: bold; color: #4f46e5; font-size: 14px;">⏰ Horario:</td>
+            <td style="padding: 6px 0; color: #1e1b4b; font-size: 14px;">${sel.time}</td>
+          </tr>
+        `
+        )
+        .join("");
+    } else {
+      detailsHtml = `
+        <tr>
+          <td style="padding: 10px 0; border-bottom: 1px solid #fbfaf8; font-weight: bold; width: 120px; color: #4f46e5;">📅 Fecha:</td>
+          <td style="padding: 10px 0; border-bottom: 1px solid #fbfaf8; color: #1e1b4b; font-size: 15px;">${date}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 0; border-bottom: 1px solid #fbfaf8; font-weight: bold; color: #4f46e5;">⏰ Horario:</td>
+          <td style="padding: 10px 0; border-bottom: 1px solid #fbfaf8; color: #1e1b4b; font-size: 15px;">${time} hs</td>
+        </tr>
+      `;
+    }
+
     const { data, error } = await resend.emails.send({
       from: `Propuesta de Plan <${emailFrom}>`,
       to: [emailTo],
-      subject: `¡${receiverName} se sumó al plan! 🥂`,
+      subject: `¡${receiverName} aceptó un plan! 🥂`,
       html: `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #6366f1; border-radius: 20px; background-color: #fbfaf8; color: #1e1b4b;">
           <div style="text-align: center; margin-bottom: 20px;">
@@ -62,17 +106,10 @@ export async function POST(request: Request) {
           <div style="background-color: #ffffff; border: 1px solid #e0e7ff; border-radius: 15px; padding: 20px; margin: 25px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
             <h3 style="color: #1e1b4b; margin-top: 0; border-bottom: 1px solid #e0e7ff; padding-bottom: 10px; font-family: Georgia, serif;">Resumen del Plan:</h3>
             <table style="width: 100%; border-collapse: collapse;">
+              ${detailsHtml}
               <tr>
-                <td style="padding: 10px 0; border-bottom: 1px solid #fbfaf8; font-weight: bold; width: 120px; color: #4f46e5;">📅 Fecha:</td>
-                <td style="padding: 10px 0; border-bottom: 1px solid #fbfaf8; color: #1e1b4b; font-size: 15px;">${date}</td>
-              </tr>
-              <tr>
-                <td style="padding: 10px 0; border-bottom: 1px solid #fbfaf8; font-weight: bold; color: #4f46e5;">⏰ Horario:</td>
-                <td style="padding: 10px 0; border-bottom: 1px solid #fbfaf8; color: #1e1b4b; font-size: 15px;">${time} hs</td>
-              </tr>
-              <tr>
-                <td style="padding: 10px 0; font-weight: bold; color: #4f46e5;">📍 Lugar:</td>
-                <td style="padding: 10px 0; color: #1e1b4b; font-size: 15px;">${location}</td>
+                <td style="padding: 10px 0; font-weight: bold; color: #4f46e5; font-size: 14px;">📍 Lugar:</td>
+                <td style="padding: 10px 0; color: #1e1b4b; font-size: 14px;">${location}</td>
               </tr>
             </table>
           </div>

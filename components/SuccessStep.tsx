@@ -7,14 +7,12 @@ import confetti from "canvas-confetti";
 import { invitationConfig } from "@/config/invitation";
 
 interface SuccessStepProps {
-  selectedDates: Date[];
-  selectedTime: string;
+  dateTimeSelections: { date: Date; time: string }[];
   selectedLocation: string;
 }
 
 export default function SuccessStep({
-  selectedDates,
-  selectedTime,
+  dateTimeSelections,
   selectedLocation,
 }: SuccessStepProps) {
   useEffect(() => {
@@ -47,20 +45,15 @@ export default function SuccessStep({
     }());
   }, []);
 
-  const formatDates = (dates: Date[]) => {
-    if (dates.length === 0) return "A convenir";
-    return dates
-      .map((date) => {
-        const options: Intl.DateTimeFormatOptions = {
-          weekday: "short",
-          day: "numeric",
-          month: "short",
-        };
-        const formatted = date.toLocaleDateString("es-AR", options);
-        // Capitalize first letter
-        return formatted.charAt(0).toUpperCase() + formatted.slice(1);
-      })
-      .join(" / ");
+  const formatSingleDate = (date: Date) => {
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+    };
+    const formatted = date.toLocaleDateString("es-AR", options);
+    // Capitalize first letter
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
   };
 
   return (
@@ -114,25 +107,32 @@ export default function SuccessStep({
             Resumen del Plan
           </h3>
           
-          <div className="flex items-start gap-3">
-            <Calendar className="w-5 h-5 text-love-primary mt-0.5 flex-shrink-0" />
-            <div>
-              <p className="text-xs text-love-dark/50 font-medium">Fecha(s)</p>
-              <p className="text-sm font-bold text-love-dark">{formatDates(selectedDates)}</p>
-            </div>
-          </div>
+          {dateTimeSelections.map((selection, index) => (
+            <div key={index} className="border-b border-indigo-50/40 pb-3 last:border-b-0 last:pb-0 space-y-2">
+              {dateTimeSelections.length > 1 && (
+                <p className="text-xs font-bold text-love-secondary">Opción {index + 1}:</p>
+              )}
+              <div className="flex items-start gap-3">
+                <Calendar className="w-5 h-5 text-love-primary mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-xs text-love-dark/50 font-medium">Fecha</p>
+                  <p className="text-sm font-bold text-love-dark">{formatSingleDate(selection.date)}</p>
+                </div>
+              </div>
 
-          <div className="flex items-start gap-3">
-            <Clock className="w-5 h-5 text-love-primary mt-0.5 flex-shrink-0" />
-            <div>
-              <p className="text-xs text-love-dark/50 font-medium">Horario</p>
-              <p className="text-sm font-bold text-love-dark">
-                {selectedTime === "elegi-vos-hora" ? "A definir por Ian (el que prefieras)" : `${selectedTime} hs`}
-              </p>
+              <div className="flex items-start gap-3">
+                <Clock className="w-5 h-5 text-love-primary mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-xs text-love-dark/50 font-medium">Horario</p>
+                  <p className="text-sm font-bold text-love-dark">
+                    {selection.time === "elegi-vos-hora" ? "A definir por Ian (el que prefieras)" : `${selection.time} hs`}
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
+          ))}
 
-          <div className="flex items-start gap-3">
+          <div className="flex items-start gap-3 pt-3 border-t border-indigo-50/40">
             <MapPin className="w-5 h-5 text-love-primary mt-0.5 flex-shrink-0" />
             <div>
               <p className="text-xs text-love-dark/50 font-medium">Lugar</p>
@@ -144,7 +144,7 @@ export default function SuccessStep({
         {/* Closing Note */}
         <div className="space-y-4 relative z-10">
           <p className="text-xs md:text-sm font-medium text-love-dark/70 italic px-4 leading-relaxed">
-            "¡Listo Cami! Ya me llegó todo. Agendadísimo... Tengo muchas ganas de que nos veamos para charlar un rato. Te escribo en estos días. ¡Un abrazo!" ✨
+            ¡Listo Cami! Ya me llegó todo. Agendadísimo... Tengo muchas ganas de que nos veamos para charlar un rato. Te escribo en estos días. ¡Un abrazo! ✨
           </p>
           
           <div className="pt-2 flex justify-center gap-1.5 items-center text-xs font-bold text-love-accent">

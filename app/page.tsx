@@ -11,8 +11,7 @@ import { invitationConfig } from "@/config/invitation";
 
 export default function Home() {
   const [step, setStep] = useState(1);
-  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
-  const [selectedTime, setSelectedTime] = useState<string>("");
+  const [dateTimeSelections, setDateTimeSelections] = useState<{ date: Date; time: string }[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const [isSending, setIsSending] = useState(false);
   const [customModalMessage, setCustomModalMessage] = useState<string | null>(null);
@@ -21,9 +20,8 @@ export default function Home() {
     setStep(2);
   };
 
-  const handleSelectDateTime = (dates: Date[], time: string) => {
-    setSelectedDates(dates);
-    setSelectedTime(time);
+  const handleSelectDateTime = (selections: { date: Date; time: string }[]) => {
+    setDateTimeSelections(selections);
     setStep(3);
   };
 
@@ -32,12 +30,21 @@ export default function Home() {
     setIsSending(true);
 
     // Format all selected dates (DD/MM/YYYY)
-    const formattedDates = selectedDates
+    const formattedDates = dateTimeSelections
       .map(
-        (date) =>
-          `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+        (sel) =>
+          `${sel.date.getDate()}/${sel.date.getMonth() + 1}/${sel.date.getFullYear()}`
       )
       .join(", ");
+
+    const formattedTimes = dateTimeSelections
+      .map((sel) => (sel.time === "elegi-vos-hora" ? "Elegí vos" : `${sel.time} hs`))
+      .join(", ");
+
+    const selectionsPayload = dateTimeSelections.map((sel) => ({
+      date: `${sel.date.getDate()}/${sel.date.getMonth() + 1}/${sel.date.getFullYear()}`,
+      time: sel.time === "elegi-vos-hora" ? "Elegí vos (El que prefieras)" : `${sel.time} hs`,
+    }));
 
     try {
       const response = await fetch("/api/send-invitation", {
@@ -47,7 +54,8 @@ export default function Home() {
         },
         body: JSON.stringify({
           date: formattedDates,
-          time: selectedTime === "elegi-vos-hora" ? "Elegí vos (El que prefieras)" : `${selectedTime} hs`,
+          time: formattedTimes,
+          selections: selectionsPayload,
           location: location,
           receiverName: invitationConfig.receiverName,
           senderName: invitationConfig.senderName,
@@ -103,6 +111,7 @@ export default function Home() {
               <DateTimeStep
                 onBack={() => setStep(1)}
                 onNext={handleSelectDateTime}
+                initialSelections={dateTimeSelections}
               />
             </motion.div>
           )}
@@ -133,8 +142,7 @@ export default function Home() {
               className="w-full flex justify-center"
             >
               <SuccessStep
-                selectedDates={selectedDates}
-                selectedTime={selectedTime}
+                dateTimeSelections={dateTimeSelections}
                 selectedLocation={selectedLocation}
               />
             </motion.div>
