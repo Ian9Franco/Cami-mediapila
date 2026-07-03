@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar as CalendarIcon, Clock, ChevronLeft, ChevronRight, ArrowRight, ArrowLeft, Trophy, Users } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, ChevronLeft, ChevronRight, ArrowRight, ArrowLeft } from "lucide-react";
 
 interface DateTimeStepProps {
   onBack: () => void;
-  onNext: (date: Date, time: string) => void;
+  onNext: (dates: Date[], time: string) => void;
 }
 
 interface CalendarEvent {
@@ -31,13 +31,26 @@ const SPECIAL_EVENTS: CalendarEvent[] = [
 export default function DateTimeStep({ onBack, onNext }: DateTimeStepProps) {
   const today = new Date();
   const [currentDate, setCurrentDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [selectedTime, setSelectedTime] = useState<string>("");
+  const [showLimitWarning, setShowLimitWarning] = useState(false);
 
-  // Clear selected time if selected date changes (since available slots will change)
+  // Clear selected time if there are no selected dates
   useEffect(() => {
-    setSelectedTime("");
-  }, [selectedDate]);
+    if (selectedDates.length === 0) {
+      setSelectedTime("");
+    }
+  }, [selectedDates]);
+
+  // Auto-dismiss the custom toast warning after 3.5 seconds
+  useEffect(() => {
+    if (showLimitWarning) {
+      const timer = setTimeout(() => {
+        setShowLimitWarning(false);
+      }, 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [showLimitWarning]);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -67,16 +80,42 @@ export default function DateTimeStep({ onBack, onNext }: DateTimeStepProps) {
     const normalizedClicked = new Date(clickedDate.getFullYear(), clickedDate.getMonth(), clickedDate.getDate());
 
     if (normalizedClicked >= normalizedToday) {
-      setSelectedDate(clickedDate);
+      setSelectedDates((prev) => {
+        const exists = prev.some(
+          (d) =>
+            d.getDate() === clickedDate.getDate() &&
+            d.getMonth() === clickedDate.getMonth() &&
+            d.getFullYear() === clickedDate.getFullYear()
+        );
+
+        if (exists) {
+          // Remove if already selected (deselect)
+          return prev.filter(
+            (d) =>
+              !(
+                d.getDate() === clickedDate.getDate() &&
+                d.getMonth() === clickedDate.getMonth() &&
+                d.getFullYear() === clickedDate.getFullYear()
+              )
+          );
+        } else {
+          // Add if not selected, limit to 6 options
+          if (prev.length >= 6) {
+            setShowLimitWarning(true);
+            return prev;
+          }
+          return [...prev, clickedDate];
+        }
+      });
     }
   };
 
   const isSelected = (dayNum: number) => {
-    if (!selectedDate) return false;
-    return (
-      selectedDate.getDate() === dayNum &&
-      selectedDate.getMonth() === month &&
-      selectedDate.getFullYear() === year
+    return selectedDates.some(
+      (d) =>
+        d.getDate() === dayNum &&
+        d.getMonth() === month &&
+        d.getFullYear() === year
     );
   };
 
@@ -98,43 +137,48 @@ export default function DateTimeStep({ onBack, onNext }: DateTimeStepProps) {
   const daysOfWeek = ["L", "M", "M", "J", "V", "S", "D"];
 
   const handleContinue = () => {
-    if (selectedDate && selectedTime) {
-      onNext(selectedDate, selectedTime);
+    if (selectedDates.length > 0 && selectedTime) {
+      onNext(selectedDates, selectedTime);
     }
   };
 
-  // Get dynamic time slots based on the selected date rules
+  // Get dynamic slots based on the active (last clicked) date rules
   const getTimeSlots = () => {
-    if (!selectedDate) return [];
-    const dayOfWeek = selectedDate.getDay(); // 0 = Sunday, 6 = Saturday
+    if (selectedDates.length === 0) return [];
+    
+    const activeDate = selectedDates[selectedDates.length - 1];
+    const dayOfWeek = activeDate.getDay(); // 0 = Sunday, 6 = Saturday
     const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 
-    if (isWeekend) {
-      // Sábado y Domingo: Libre (Todo el día)
-      return [
-        { value: "10:30", label: "10:30 hs - Mañana" },
-        { value: "13:30", label: "13:30 hs - Almuerzo" },
-        { value: "16:00", label: "16:00 hs - Tarde / Café" },
-        { value: "18:30", label: "18:30 hs - Tarde / Atardecer" },
-        { value: "21:30", label: "21:30 hs - Noche / Cena" },
-        { value: "23:30", label: "23:30 hs - Noche / Tragos" }
-      ];
-    } else {
-      // Lunes a Viernes: Solo mañana (06:00 a 12:00) y noche (18:00 a 06:00)
-      return [
-        { value: "08:30", label: "08:30 hs - Mañana" },
-        { value: "10:00", label: "10:00 hs - Mañana" },
-        { value: "11:30", label: "11:30 hs - Mañana" },
-        { value: "19:00", label: "19:00 hs - Noche" },
-        { value: "20:30", label: "20:30 hs - Noche" },
-        { value: "22:00", label: "22:00 hs - Noche" }
-      ];
-    }
+    const baseSlots = isWeekend
+      ? [
+          { value: "10:30", label: "10:30 hs - Mañana" },
+          { value: "13:30", label: "13:30 hs - Almuerzo" },
+          { value: "16:00", label: "16:00 hs - Tarde / Café" },
+          { value: "18:30", label: "18:30 hs - Tarde / Atardecer" },
+          { value: "21:30", label: "21:30 hs - Noche / Cena" },
+          { value: "23:30", label: "23:30 hs - Noche / Tragos" }
+        ]
+      : [
+          { value: "08:30", label: "08:30 hs - Mañana" },
+          { value: "10:00", label: "10:00 hs - Mañana" },
+          { value: "11:30", label: "11:30 hs - Mañana" },
+          { value: "19:00", label: "19:00 hs - Noche" },
+          { value: "20:30", label: "20:30 hs - Noche" },
+          { value: "22:00", label: "22:00 hs - Noche" }
+        ];
+
+    // Add "Elegí vos" option at the end
+    return [
+      ...baseSlots,
+      { value: "elegi-vos-hora", label: "🤷‍♀️ Elegí vos (El que prefieras)" }
+    ];
   };
 
   const currentSlots = getTimeSlots();
-  const selectedDateEvent = selectedDate ? SPECIAL_EVENTS.find(
-    (e) => e.day === selectedDate.getDate() && e.month === selectedDate.getMonth() && e.year === selectedDate.getFullYear()
+  const activeDate = selectedDates.length > 0 ? selectedDates[selectedDates.length - 1] : null;
+  const selectedDateEvent = activeDate ? SPECIAL_EVENTS.find(
+    (e) => e.day === activeDate.getDate() && e.month === activeDate.getMonth() && e.year === activeDate.getFullYear()
   ) : null;
 
   return (
@@ -151,7 +195,7 @@ export default function DateTimeStep({ onBack, onNext }: DateTimeStepProps) {
           ¿Cuándo nos vemos? 📅
         </h2>
         <p className="text-sm text-love-dark/70 text-center mb-6">
-          Elegí el día y la hora que te queden mejor.
+          Elegí los días (marcar hasta 6) y la hora que te queden mejor.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
@@ -240,7 +284,7 @@ export default function DateTimeStep({ onBack, onNext }: DateTimeStepProps) {
             </h3>
 
             <AnimatePresence mode="wait">
-              {selectedDate ? (
+              {selectedDates.length > 0 ? (
                 <motion.div
                   key="slots-container"
                   initial={{ opacity: 0, x: 10 }}
@@ -301,19 +345,21 @@ export default function DateTimeStep({ onBack, onNext }: DateTimeStepProps) {
             </AnimatePresence>
 
             {/* Selection Summary */}
-            {selectedDate && selectedTime && (
+            {selectedDates.length > 0 && selectedTime && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="mt-4 p-2.5 bg-love-light/20 border border-indigo-50 rounded-2xl text-center text-xs text-love-dark font-medium"
               >
-                Elegiste el{" "}
+                Elegiste:{" "}
                 <span className="font-bold text-love-accent">
-                  {selectedDate.getDate()} de {monthNames[selectedDate.getMonth()]}
+                  {selectedDates
+                    .map((d) => `${d.getDate()} de ${monthNames[d.getMonth()]}`)
+                    .join(", ")}
                 </span>{" "}
                 a las{" "}
                 <span className="font-bold text-love-accent">
-                  {selectedTime} hs
+                  {selectedTime === "elegi-vos-hora" ? "el que prefieras" : `${selectedTime} hs`}
                 </span>.
               </motion.div>
             )}
@@ -333,7 +379,7 @@ export default function DateTimeStep({ onBack, onNext }: DateTimeStepProps) {
           
           <button
             type="button"
-            disabled={!selectedDate || !selectedTime}
+            disabled={selectedDates.length === 0 || !selectedTime}
             onClick={handleContinue}
             className="flex items-center gap-2 px-6 py-3 bg-love-primary hover:bg-love-accent disabled:opacity-40 disabled:hover:bg-love-primary text-white font-bold rounded-2xl shadow-romantic hover:shadow-romantic-lg transition-all duration-200 cursor-pointer disabled:cursor-not-allowed text-sm"
           >
@@ -341,6 +387,27 @@ export default function DateTimeStep({ onBack, onNext }: DateTimeStepProps) {
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
+
+        {/* Custom Toast Warning Modal */}
+        <AnimatePresence>
+          {showLimitWarning && (
+            <motion.div
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              className="absolute bottom-16 inset-x-6 bg-slate-900/90 text-white text-xs font-semibold px-4 py-3 rounded-2xl shadow-xl flex items-center justify-between z-50 border border-slate-700/50 backdrop-blur-sm"
+            >
+              <span>Podés elegir hasta 6 opciones de días para coordinar 😊</span>
+              <button
+                type="button"
+                onClick={() => setShowLimitWarning(false)}
+                className="ml-3 text-love-gold hover:text-white font-bold cursor-pointer text-sm px-2 py-1 transition-colors"
+              >
+                Listo
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </div>
   );

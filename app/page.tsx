@@ -11,17 +11,18 @@ import { invitationConfig } from "@/config/invitation";
 
 export default function Home() {
   const [step, setStep] = useState(1);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const [isSending, setIsSending] = useState(false);
+  const [customModalMessage, setCustomModalMessage] = useState<string | null>(null);
 
   const handleAcceptInvitation = () => {
     setStep(2);
   };
 
-  const handleSelectDateTime = (date: Date, time: string) => {
-    setSelectedDate(date);
+  const handleSelectDateTime = (dates: Date[], time: string) => {
+    setSelectedDates(dates);
     setSelectedTime(time);
     setStep(3);
   };
@@ -30,10 +31,13 @@ export default function Home() {
     setSelectedLocation(location);
     setIsSending(true);
 
-    // Format date (DD/MM/YYYY)
-    const formattedDate = selectedDate
-      ? `${selectedDate.getDate()}/${selectedDate.getMonth() + 1}/${selectedDate.getFullYear()}`
-      : "";
+    // Format all selected dates (DD/MM/YYYY)
+    const formattedDates = selectedDates
+      .map(
+        (date) =>
+          `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+      )
+      .join(", ");
 
     try {
       const response = await fetch("/api/send-invitation", {
@@ -42,8 +46,8 @@ export default function Home() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          date: formattedDate,
-          time: selectedTime,
+          date: formattedDates,
+          time: selectedTime === "elegi-vos-hora" ? "Elegí vos (El que prefieras)" : `${selectedTime} hs`,
           location: location,
           receiverName: invitationConfig.receiverName,
           senderName: invitationConfig.senderName,
@@ -57,12 +61,10 @@ export default function Home() {
       setStep(4);
     } catch (error) {
       console.error("Form submission error:", error);
-      // Even if email fails (network down/missing config), we want to make the experience smooth for her.
-      // So we will alert and then show success details anyway, avoiding frustration.
-      alert(
+      // Instead of generic alert, trigger our custom modal notification
+      setCustomModalMessage(
         `¡Oops! Hubo un problemita de red al enviar tus elecciones por mail, pero no te preocupes, ¡la cita sigue en pie! 💖`
       );
-      setStep(4);
     } finally {
       setIsSending(false);
     }
@@ -131,7 +133,7 @@ export default function Home() {
               className="w-full flex justify-center"
             >
               <SuccessStep
-                selectedDate={selectedDate}
+                selectedDates={selectedDates}
                 selectedTime={selectedTime}
                 selectedLocation={selectedLocation}
               />
@@ -139,6 +141,36 @@ export default function Home() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Custom Modal Notification Overlay */}
+      <AnimatePresence>
+        {customModalMessage && (
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white border border-rose-50 rounded-3xl p-6 shadow-2xl max-w-sm w-full text-center space-y-4 relative overflow-hidden"
+            >
+              <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-love-primary to-love-gold" />
+              <div className="text-3xl pt-2">💌</div>
+              <p className="text-xs md:text-sm font-semibold text-love-dark leading-relaxed">
+                {customModalMessage}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setCustomModalMessage(null);
+                  setStep(4); // Advance to Success step
+                }}
+                className="w-full py-3 bg-love-primary hover:bg-love-accent text-white font-bold rounded-2xl shadow-romantic hover:shadow-romantic-lg cursor-pointer transition-all text-sm"
+              >
+                ¡Buenísimo!
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

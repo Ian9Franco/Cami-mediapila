@@ -49,31 +49,79 @@ export const invitationConfig: InvitationConfig = {
   receiverName: "Camila",
   title: "Camila, ¿te sumás a este plan?",
   subtitle: "Preparé esta página para hacerte una propuesta. Elegí la opción que prefieras.",
-  cardMessage: "Hola Cami,\n\nHace bastante no charlamos. Armé esto para invitarte a hacer algo. Vos elegís el plan.\n\nAbrazo,\nIan",
+  cardMessage: "Hola Cami,\n\nHace como un mes no te veo, asi que no tuve opcio. Armé esto para que elijas el plan que más te guste.\n\nVos decís qué hacemos, cuándo y dónde. O nada mas elegis un dia.\n\nIan",
   places: [
     {
-      id: "cafe",
-      name: "Tarde de Café Especial",
-      description: "Un cafecito de especialidad en un lugar lindo para charlar tranquilos.",
-      address: "Cuervo Café - El Salvador 4580, Palermo, CABA",
-      mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3284.8587127116744!2d-58.42831202476569!3d-34.58243685637255!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcb580b06b9b3f%3A0xe54e668c66e288e2!2sCuervo%20Caf%C3%A9!5e0!3m2!1ses-419!2sar!4v1700000000000!5m2!1ses-419!2sar",
+      id: "casa-ian",
+      name: "Venir a mi casa",
+      description: "Cocinamos algo rico, charlamos tranquilos y escuchamos música.",
+      address: "Ituzaingó 5458, Villa Luzuriaga, Provincia de Buenos Aires",
+      mapEmbedUrl: "https://maps.google.com/maps?q=Ituzaing%C3%B3%205458,%20Villa%20Luzuriaga&t=&z=15&ie=UTF8&iwloc=&output=embed",
+      emoji: "💤"
+    },
+    {
+      id: "cafe-reca",
+      name: "Cafecito en RECA (Ramos)",
+      description: "Café de especialidad riquísimo y excelente pastelería en Ramos.",
+      address: "RECA CAFE - Necochea 212, Ramos Mejía, Provincia de Buenos Aires",
+      mapEmbedUrl: "https://maps.google.com/maps?q=RECA%20CAFE,%20Ramos%20Mej%C3%ADa&t=&z=15&ie=UTF8&iwloc=&output=embed",
       emoji: "☕"
     },
     {
-      id: "cena",
-      name: "Salir a Comer",
-      description: "Comida rica, tragos o cerveza en un lugar piola con buena música.",
-      address: "La Alacena Trattoria - Gascón 1401, Palermo, CABA",
-      mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3284.148564024823!2d-58.42250282476505!3d-34.599104057329584!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcca7e335f492b%3A0xb3ab20c52bb7f52a!2sLa%20Alacena%20Trattoria!5e0!3m2!1ses-419!2sar!4v1700000000000!5m2!1ses-419!2sar",
+      id: "bar-rocky",
+      name: "Cena en Rocky (Ramos)",
+      description: "Tragos con onda, cervezas y hamburguesas en un ambiente rockero.",
+      address: "Rocky Restaurant & Bar - Av. de Mayo 394, Ramos Mejía, Provincia de Buenos Aires",
+      mapEmbedUrl: "https://maps.google.com/maps?q=Rocky%20Restaurant%20%26%20Bar,%20Ramos%20Mej%C3%ADa&t=&z=15&ie=UTF8&iwloc=&output=embed",
       emoji: "🍻"
     },
     {
-      id: "picnic",
-      name: "Picnic al Aire Libre",
-      description: "Unos mates, algo rico para comer y charlas rodeados de verde al sol.",
-      address: "El Rosedal de Palermo - Av. Infanta Isabel, CABA",
-      mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3285.3402636287955!2d-58.4206587247662!3d-34.570258165682855!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcb56ff8b59e79%3A0x8681ee72ee020c02!2sEl%20Rosedal%20de%20Palermo!5e0!3m2!1ses-419!2sar!4v1700000000000!5m2!1ses-419!2sar",
-      emoji: "🧺"
+      id: "bar-ditta",
+      name: "Cena en Ditta (Ramos)",
+      description: "Pizza napolitana, tragos ricos y plantas en un hermoso ambiente botánico.",
+      address: "Ditta Bar Botánico - Rosales 215, Ramos Mejía, Provincia de Buenos Aires",
+      mapEmbedUrl: "https://maps.google.com/maps?q=Ditta%20Bar%20Bot%C3%A1nico,%20Ramos%20Mej%C3%ADa&t=&z=15&ie=UTF8&iwloc=&output=embed",
+      emoji: "🌿"
+    },
+    {
+      id: "cafe-palermo",
+      name: "Cafecito en Palermo",
+      description: "Un café de especialidad y caminata por Palermo Soho.",
+      address: "Cuervo Café - El Salvador 4580, Palermo, CABA",
+      mapEmbedUrl: "https://maps.google.com/maps?q=Cuervo%20Caf%C3%A9%20El%20Salvador%204580%20CABA&t=&z=15&ie=UTF8&iwloc=&output=embed",
+      emoji: "☕"
+    },
+    {
+      id: "bar-palermo",
+      name: "Cena o Tragos en Palermo",
+      description: "Tapas y buenos gin tonics en el hermoso jardín de la Biblioteca Nacional.",
+      address: "Invernadero - Av. Las Heras 2555, Recoleta/Palermo, CABA",
+      mapEmbedUrl: "https://maps.google.com/maps?q=Invernadero%20Biblioteca%20Nacional%20CABA&t=&z=15&ie=UTF8&iwloc=&output=embed",
+      emoji: "🍸"
+    },
+    {
+      id: "cafe-barracas",
+      name: "Café al salir (Barracas)",
+      description: "Un cafecito al paso al salir de trabajar para cortar la semana.",
+      address: "La Flor de Barracas - Av. Suárez 2095, Barracas, CABA",
+      mapEmbedUrl: "https://maps.google.com/maps?q=La%20Flor%20de%20Barracas%20Av%20Suarez%202095%20CABA&t=&z=15&ie=UTF8&iwloc=&output=embed",
+      emoji: "💼"
+    },
+    {
+      id: "cafe-sur",
+      name: "Café en Lomas (Zona Sur)",
+      description: "Merienda de especialidad cerca de tu zona.",
+      address: "Duro Café - Italia 412, Lomas de Zamora, Provincia de Buenos Aires",
+      mapEmbedUrl: "https://maps.google.com/maps?q=Duro%20Cafe%20Lomas%20de%20Zamora&t=&z=15&ie=UTF8&iwloc=&output=embed",
+      emoji: "🏡"
+    },
+    {
+      id: "elegi-vos-lugar",
+      name: "Elegí vos 🤔",
+      description: "¡Sorprendeme! Dejo la elección del lugar en tus manos.",
+      address: "Lugar a definir por Ian",
+      mapEmbedUrl: "https://maps.google.com/maps?q=Ramos%20Mej%C3%ADa&t=&z=14&ie=UTF8&iwloc=&output=embed",
+      emoji: "🎲"
     }
   ],
   timeSlots: [

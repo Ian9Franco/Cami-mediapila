@@ -7,13 +7,13 @@ import confetti from "canvas-confetti";
 import { invitationConfig } from "@/config/invitation";
 
 interface SuccessStepProps {
-  selectedDate: Date | null;
+  selectedDates: Date[];
   selectedTime: string;
   selectedLocation: string;
 }
 
 export default function SuccessStep({
-  selectedDate,
+  selectedDates,
   selectedTime,
   selectedLocation,
 }: SuccessStepProps) {
@@ -47,16 +47,20 @@ export default function SuccessStep({
     }());
   }, []);
 
-  const formatDate = (date: Date | null) => {
-    if (!date) return "";
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-    };
-    const formatted = date.toLocaleDateString("es-AR", options);
-    // Capitalize first letter
-    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+  const formatDates = (dates: Date[]) => {
+    if (dates.length === 0) return "A convenir";
+    return dates
+      .map((date) => {
+        const options: Intl.DateTimeFormatOptions = {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+        };
+        const formatted = date.toLocaleDateString("es-AR", options);
+        // Capitalize first letter
+        return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+      })
+      .join(" / ");
   };
 
   return (
@@ -105,8 +109,8 @@ export default function SuccessStep({
           <div className="flex items-start gap-3">
             <Calendar className="w-5 h-5 text-love-primary mt-0.5 flex-shrink-0" />
             <div>
-              <p className="text-xs text-love-dark/50 font-medium">Fecha</p>
-              <p className="text-sm font-bold text-love-dark">{formatDate(selectedDate)}</p>
+              <p className="text-xs text-love-dark/50 font-medium">Fecha(s)</p>
+              <p className="text-sm font-bold text-love-dark">{formatDates(selectedDates)}</p>
             </div>
           </div>
 
@@ -114,7 +118,9 @@ export default function SuccessStep({
             <Clock className="w-5 h-5 text-love-primary mt-0.5 flex-shrink-0" />
             <div>
               <p className="text-xs text-love-dark/50 font-medium">Horario</p>
-              <p className="text-sm font-bold text-love-dark">{selectedTime} hs</p>
+              <p className="text-sm font-bold text-love-dark">
+                {selectedTime === "elegi-vos-hora" ? "A definir por Ian (el que prefieras)" : `${selectedTime} hs`}
+              </p>
             </div>
           </div>
 
@@ -130,7 +136,7 @@ export default function SuccessStep({
         {/* Closing Note */}
         <div className="space-y-4">
           <p className="text-xs md:text-sm font-medium text-love-dark/70 italic px-4 leading-relaxed">
-            "¡Listo! Ya quedó todo agendado del otro lado. Nos vemos pronto para ponernos al día y pasar un buen rato." ✨
+            "¡Listo Cami! Ya me llegó todo. Agendadísimo... Tengo muchas ganas de que nos veamos para charlar un rato. Te escribo en estos días. ¡Un abrazo!" ✨
           </p>
           
           <div className="pt-2 flex justify-center gap-1.5 items-center text-xs font-bold text-love-accent">
