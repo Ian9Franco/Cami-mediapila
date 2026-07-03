@@ -13,8 +13,9 @@ export default function InvitationStep({ onAccept }: InvitationStepProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [noButtonPosition, setNoButtonPosition] = useState({ x: 0, y: 0 });
   const [isSwapped, setIsSwapped] = useState(false);
+  const [noTouchCount, setNoTouchCount] = useState(0);
 
-  const handleNoHover = () => {
+  const handleNoDodge = () => {
     // Jump in a random angle (0 to 360 degrees) by a distance of 70px to 150px
     const angle = Math.random() * Math.PI * 2;
     const distance = Math.random() * 80 + 70; // min 70px, max 150px
@@ -24,10 +25,32 @@ export default function InvitationStep({ onAccept }: InvitationStepProps) {
     setNoButtonPosition({ x: newX, y: newY });
   };
 
-  const handleNoClick = () => {
+  const handleNoSwap = () => {
     // Swap buttons and reset current evasion coordinates so they swap cleanly
     setIsSwapped((prev) => !prev);
     setNoButtonPosition({ x: 0, y: 0 });
+  };
+
+  const handleNoTouch = (e: React.TouchEvent) => {
+    e.preventDefault(); // Prevent standard click behavior on touch devices to avoid double execution
+    const nextCount = noTouchCount + 1;
+    setNoTouchCount(nextCount);
+
+    if (nextCount % 4 === 0) {
+      handleNoSwap();
+    } else {
+      handleNoDodge();
+    }
+  };
+
+  const handleNoHover = () => {
+    handleNoDodge();
+  };
+
+  const handleNoClick = () => {
+    // Standard click handler (e.g. keyboard navigation or desktop click)
+    handleNoSwap();
+    setNoTouchCount(0); // Reset touch count upon a clean swap
   };
 
   return (
@@ -119,7 +142,7 @@ export default function InvitationStep({ onAccept }: InvitationStepProps) {
                   }}
                   transition={{ type: "spring", stiffness: 350, damping: 18 }}
                   onMouseEnter={isSwapped ? handleNoHover : undefined}
-                  onTouchStart={isSwapped ? handleNoHover : undefined}
+                  onTouchStart={isSwapped ? handleNoTouch : undefined}
                   onClick={isSwapped ? handleNoClick : onAccept}
                   className={`absolute left-1/2 -translate-x-[115%] px-6 py-3.5 rounded-2xl transition-colors duration-200 text-md cursor-pointer select-none whitespace-nowrap
                     ${isSwapped 
@@ -140,7 +163,7 @@ export default function InvitationStep({ onAccept }: InvitationStepProps) {
                   }}
                   transition={{ type: "spring", stiffness: 350, damping: 18 }}
                   onMouseEnter={!isSwapped ? handleNoHover : undefined}
-                  onTouchStart={!isSwapped ? handleNoHover : undefined}
+                  onTouchStart={!isSwapped ? handleNoTouch : undefined}
                   onClick={!isSwapped ? handleNoClick : onAccept}
                   className={`absolute left-1/2 translate-x-[15%] px-6 py-3.5 rounded-2xl transition-colors duration-200 text-md cursor-pointer select-none whitespace-nowrap
                     ${!isSwapped 

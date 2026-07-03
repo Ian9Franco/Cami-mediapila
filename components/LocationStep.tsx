@@ -43,7 +43,7 @@ export default function LocationStep({ onBack, onNext, isSending }: LocationStep
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white border border-rose-100 rounded-3xl p-6 md:p-8 shadow-romantic-lg glass-panel relative overflow-hidden"
+        className="bg-white border border-rose-100 rounded-3xl p-4 sm:p-6 md:p-8 shadow-romantic-lg glass-panel relative overflow-hidden"
       >
         {/* Top Accent Line */}
         <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-love-primary via-love-secondary to-love-accent" />
@@ -56,7 +56,7 @@ export default function LocationStep({ onBack, onNext, isSending }: LocationStep
         </p>
 
         {/* Place Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-3 mb-4 md:mb-6">
           {invitationConfig.places.map((place) => {
             const isSelected = selectedPlace?.id === place.id && !isCustomLocation;
             return (
@@ -64,19 +64,19 @@ export default function LocationStep({ onBack, onNext, isSending }: LocationStep
                 key={place.id}
                 type="button"
                 onClick={() => handleSelectPlace(place)}
-                className={`text-left p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between h-32 relative overflow-hidden group
+                className={`text-left p-2.5 md:p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between h-28 md:h-32 relative overflow-hidden group
                   ${isSelected
                     ? "border-love-primary bg-love-light/60 text-love-accent shadow-romantic font-bold"
                     : "border-rose-100 hover:border-love-secondary bg-white text-love-dark/85"
                   }
                 `}
               >
-                <div className="text-2xl mb-1">{place.emoji}</div>
+                <div className="text-xl md:text-2xl mb-0.5 md:mb-1">{place.emoji}</div>
                 <div>
-                  <h3 className="font-serif text-sm font-bold leading-tight group-hover:text-love-accent transition-colors">
+                  <h3 className="font-serif text-xs md:text-sm font-bold leading-tight group-hover:text-love-accent transition-colors">
                     {place.name}
                   </h3>
-                  <p className="text-[11px] text-love-dark/60 mt-1 line-clamp-2 font-medium">
+                  <p className="text-[9px] md:text-[11px] text-love-dark/60 mt-0.5 md:mt-1 line-clamp-2 font-medium">
                     {place.description}
                   </p>
                 </div>
@@ -91,19 +91,19 @@ export default function LocationStep({ onBack, onNext, isSending }: LocationStep
           <button
             type="button"
             onClick={handleSelectCustom}
-            className={`text-left p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between h-32 relative overflow-hidden group
+            className={`text-left p-2.5 md:p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between h-28 md:h-32 relative overflow-hidden group
               ${isCustomLocation
                 ? "border-love-primary bg-love-light/60 text-love-accent shadow-romantic font-bold"
                 : "border-rose-100 hover:border-love-secondary bg-white text-love-dark/85"
               }
             `}
           >
-            <div className="text-2xl mb-1">✨</div>
+            <div className="text-xl md:text-2xl mb-0.5 md:mb-1">✨</div>
             <div>
-              <h3 className="font-serif text-sm font-bold leading-tight group-hover:text-love-accent transition-colors">
+              <h3 className="font-serif text-xs md:text-sm font-bold leading-tight group-hover:text-love-accent transition-colors">
                 Proponer otro lugar
               </h3>
-              <p className="text-[11px] text-love-dark/60 mt-1 line-clamp-2 font-medium">
+              <p className="text-[9px] md:text-[11px] text-love-dark/60 mt-0.5 md:mt-1 line-clamp-2 font-medium">
                 ¿Tenés algún lugar preferido en mente? ¡Escribilo acá!
               </p>
             </div>

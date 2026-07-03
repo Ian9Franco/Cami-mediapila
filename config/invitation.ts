@@ -49,12 +49,12 @@ export const invitationConfig: InvitationConfig = {
   receiverName: "Camila",
   title: "Camila, ¿te sumás a este plan?",
   subtitle: "Preparé esta página para hacerte una propuesta. Elegí la opción que prefieras.",
-  cardMessage: "Hola Cami,\n\nHace como un mes no te veo, asi que no tuve opcio. Armé esto para que elijas el plan que más te guste.\n\nVos decís qué hacemos, cuándo y dónde. O nada mas elegis un dia.\n\nIan",
+  cardMessage: "Hola Cami, soy yo, ian a\n\nSoy el chico con el que saliste hace como un mes, fuimos a ver una peli, te acordas? Y viendo que sos re vueltera, no tuve opcion. Armé esto para que elijas el plan que más te guste.\n\nVos decís qué hacemos, cuándo y dónde. O nada mas elegis un dia.\n\n Cuando lo completes, me va a llegar un mail con todo lo que hayas puesto.\n\n con <3 Ian",
   places: [
     {
       id: "casa-ian",
       name: "Venir a mi casa",
-      description: "Cocinamos algo rico, charlamos tranquilos y escuchamos música.",
+      description: " :) ",
       address: "Ituzaingó 5458, Villa Luzuriaga, Provincia de Buenos Aires",
       mapEmbedUrl: "https://maps.google.com/maps?q=Ituzaing%C3%B3%205458,%20Villa%20Luzuriaga&t=&z=15&ie=UTF8&iwloc=&output=embed",
       emoji: "💤"
