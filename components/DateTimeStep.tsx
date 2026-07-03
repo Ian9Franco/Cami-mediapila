@@ -293,6 +293,11 @@ export default function DateTimeStep({ onBack, onNext }: DateTimeStepProps) {
                 );
               })}
             </div>
+
+            {/* Calendar Caption */}
+            <p className="text-[11px] md:text-xs font-bold text-love-accent/80 italic mt-4 text-center">
+              Tenemos que vernos antes que termine el mundial o terminamos mal 😤
+            </p>
           </div>
 
           {/* Time Slots Section (Right) */}
