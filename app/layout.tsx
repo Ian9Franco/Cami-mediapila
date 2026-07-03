@@ -15,11 +15,11 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Tengo una pregunta... 👀",
-  description: "Preparé una propuesta especial para Camila. Abrí el sobre para ver de qué se trata.",
+  title: "Tengo algo para vos... 👀",
+  description: "Preparé uesta web para Camila. Abrí el link para ver.",
   openGraph: {
-    title: "Tengo una pregunta... 👀",
-    description: "Preparé una propuesta especial para Camila. Abrí el sobre para ver de qué se trata.",
+    title: "Tengo algo para vos... 👀",
+    description: "Preparé uesta web para Camila. Abrí el link para ver.",
     type: "website",
   },
 };
