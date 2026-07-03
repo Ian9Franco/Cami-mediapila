@@ -99,7 +99,7 @@ export default function InvitationStep({ onAccept }: InvitationStepProps) {
                 Hola Camila
               </h1>
               <p className="mt-2 text-love-dark/70 font-semibold text-sm">
-                Te llegó un mensaje misterioso
+                Ya sabes que soy medio nerd, asi que tenia que hacer algo diferente a lo que cualquier otro haria.
               </p>
             </div>
           </motion.div>
@@ -117,65 +117,90 @@ export default function InvitationStep({ onAccept }: InvitationStepProps) {
               animate={{ scale: 1 }}
               className="w-full bg-white border border-indigo-50 rounded-3xl p-6 md:p-8 shadow-romantic-lg glass-panel relative overflow-visible"
             >
+              {/* Background Image Wrapper */}
+              <div 
+                className="absolute inset-0 rounded-[24px] overflow-hidden pointer-events-none z-0"
+                style={{
+                  backgroundImage: "url('/1.jpg')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              >
+                {/* Animated semi-transparent overlay to ensure text readability */}
+                <motion.div 
+                  initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+                  animate={{ opacity: 0.8, backdropFilter: "blur(1.5px)" }}
+                  transition={{ duration: 1.0, delay: 0.6, ease: "easeInOut" }}
+                  className="absolute inset-0 bg-white"
+                />
+              </div>
+
               {/* Top Decorative Border */}
-              <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-love-primary via-love-secondary to-love-gold" />
+              <div className="absolute top-0 inset-x-0 h-2 rounded-t-[24px] chroma-border z-10" />
               
-              <div className="flex justify-between items-center mb-6">
-                <Compass className="w-5 h-5 text-love-gold animate-bounce" />
-                <span className="text-xs font-bold text-love-accent/65 tracking-widest uppercase">
-                  Propuesta
-                </span>
-                <Compass className="w-5 h-5 text-love-gold animate-bounce delay-100" />
-              </div>
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.4, ease: "easeOut" }}
+                className="relative z-10 flex flex-col w-full"
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <Compass className="w-5 h-5 text-love-gold animate-bounce" />
+                  <span className="text-xs font-bold text-love-accent/65 tracking-widest uppercase">
+                    Propuesta
+                  </span>
+                  <Compass className="w-5 h-5 text-love-gold animate-bounce delay-100" />
+                </div>
 
-              <div className="font-serif text-lg md:text-xl text-love-dark leading-relaxed whitespace-pre-line text-center px-2 py-4 italic">
-                {invitationConfig.cardMessage}
-              </div>
+                <div className="font-serif text-lg md:text-xl text-love-dark leading-relaxed whitespace-pre-line text-center px-2 py-4 italic">
+                  {invitationConfig.cardMessage}
+                </div>
 
-              {/* Action Buttons Container */}
-              <div className="mt-8 relative w-full h-16 max-w-sm mx-auto">
-                {/* BUTTON A (Left by default) */}
-                <motion.button
-                  animate={{
-                    x: isSwapped ? noButtonPosition.x : 0,
-                    y: isSwapped ? noButtonPosition.y : 0,
-                  }}
-                  transition={{ type: "spring", stiffness: 350, damping: 18 }}
-                  onMouseEnter={isSwapped ? handleNoHover : undefined}
-                  onTouchStart={isSwapped ? handleNoTouch : undefined}
-                  onClick={isSwapped ? handleNoClick : onAccept}
-                  className={`absolute left-1/2 -translate-x-[115%] px-6 py-3.5 rounded-2xl transition-colors duration-200 text-md cursor-pointer select-none whitespace-nowrap
-                    ${isSwapped 
-                      ? "bg-slate-50 hover:bg-slate-100 text-love-primary border border-indigo-100 font-semibold z-0" 
-                      : "bg-love-primary hover:bg-love-accent text-white font-bold shadow-romantic hover:shadow-romantic-lg z-10"
-                    }
-                  `}
-                >
-                  {!isSwapped && <Check className="w-4.5 h-4.5 inline-block mr-1.5 align-text-bottom" />}
-                  {isSwapped ? "no quiero" : "¡Sí, de una!"}
-                </motion.button>
+                {/* Action Buttons Container */}
+                <div className="mt-8 relative w-full h-16 max-w-sm mx-auto">
+                  {/* BUTTON A (Left by default) */}
+                  <motion.button
+                    animate={{
+                      x: isSwapped ? noButtonPosition.x : 0,
+                      y: isSwapped ? noButtonPosition.y : 0,
+                    }}
+                    transition={{ type: "spring", stiffness: 350, damping: 18 }}
+                    onMouseEnter={isSwapped ? handleNoHover : undefined}
+                    onTouchStart={isSwapped ? handleNoTouch : undefined}
+                    onClick={isSwapped ? handleNoClick : onAccept}
+                    className={`absolute left-1/2 -translate-x-[115%] px-6 py-3.5 rounded-2xl transition-colors duration-200 text-md cursor-pointer select-none whitespace-nowrap
+                      ${isSwapped 
+                        ? "bg-slate-50 hover:bg-slate-100 text-love-primary border border-indigo-100 font-semibold z-0" 
+                        : "bg-love-primary hover:bg-love-accent text-white font-bold shadow-romantic hover:shadow-romantic-lg z-10"
+                      }
+                    `}
+                  >
+                    {!isSwapped && <Check className="w-4.5 h-4.5 inline-block mr-1.5 align-text-bottom" />}
+                    {isSwapped ? "no quiero" : "¡Sí, de una!"}
+                  </motion.button>
 
-                {/* BUTTON B (Right by default) */}
-                <motion.button
-                  animate={{
-                    x: !isSwapped ? noButtonPosition.x : 0,
-                    y: !isSwapped ? noButtonPosition.y : 0,
-                  }}
-                  transition={{ type: "spring", stiffness: 350, damping: 18 }}
-                  onMouseEnter={!isSwapped ? handleNoHover : undefined}
-                  onTouchStart={!isSwapped ? handleNoTouch : undefined}
-                  onClick={!isSwapped ? handleNoClick : onAccept}
-                  className={`absolute left-1/2 translate-x-[15%] px-6 py-3.5 rounded-2xl transition-colors duration-200 text-md cursor-pointer select-none whitespace-nowrap
-                    ${!isSwapped 
-                      ? "bg-slate-50 hover:bg-slate-100 text-love-primary border border-indigo-100 font-semibold z-0" 
-                      : "bg-love-primary hover:bg-love-accent text-white font-bold shadow-romantic hover:shadow-romantic-lg z-10"
-                    }
-                  `}
-                >
-                  {isSwapped && <Check className="w-4.5 h-4.5 inline-block mr-1.5 align-text-bottom" />}
-                  {!isSwapped ? "no quiero" : "¡Sí, de una!"}
-                </motion.button>
-              </div>
+                  {/* BUTTON B (Right by default) */}
+                  <motion.button
+                    animate={{
+                      x: !isSwapped ? noButtonPosition.x : 0,
+                      y: !isSwapped ? noButtonPosition.y : 0,
+                    }}
+                    transition={{ type: "spring", stiffness: 350, damping: 18 }}
+                    onMouseEnter={!isSwapped ? handleNoHover : undefined}
+                    onTouchStart={!isSwapped ? handleNoTouch : undefined}
+                    onClick={!isSwapped ? handleNoClick : onAccept}
+                    className={`absolute left-1/2 translate-x-[15%] px-6 py-3.5 rounded-2xl transition-colors duration-200 text-md cursor-pointer select-none whitespace-nowrap
+                      ${!isSwapped 
+                        ? "bg-slate-50 hover:bg-slate-100 text-love-primary border border-indigo-100 font-semibold z-0" 
+                        : "bg-love-primary hover:bg-love-accent text-white font-bold shadow-romantic hover:shadow-romantic-lg z-10"
+                      }
+                    `}
+                  >
+                    {isSwapped && <Check className="w-4.5 h-4.5 inline-block mr-1.5 align-text-bottom" />}
+                    {!isSwapped ? "no quiero" : "¡Sí, de una!"}
+                  </motion.button>
+                </div>
+              </motion.div>
             </motion.div>
           </motion.div>
         )}

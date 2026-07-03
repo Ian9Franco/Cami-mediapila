@@ -44,19 +44,38 @@ export default function LocationStep({ onBack, onNext, isSending }: LocationStep
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-white border border-rose-100 rounded-3xl p-4 sm:p-6 md:p-8 shadow-romantic-lg glass-panel relative overflow-hidden"
+        style={{
+          backgroundImage: "url('/3.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
-        {/* Top Accent Line */}
-        <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-love-primary via-love-secondary to-love-accent" />
+        {/* Animated semi-transparent overlay to ensure text readability */}
+        <motion.div 
+          initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+          animate={{ opacity: 0.8, backdropFilter: "blur(1.5px)" }}
+          transition={{ duration: 1.0, delay: 0.6, ease: "easeInOut" }}
+          className="absolute inset-0 bg-white z-0 pointer-events-none"
+        />
 
-        <h2 className="font-serif text-2xl md:text-3xl font-bold text-love-dark text-center mb-1 flex items-center justify-center gap-2">
-          ¿A dónde vamos? 📍
-        </h2>
-        <p className="text-sm text-love-dark/70 text-center mb-6">
+        {/* Top Accent Line */}
+        <div className="absolute top-0 inset-x-0 h-2 rounded-t-3xl chroma-border z-10" />
+
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.4, ease: "easeOut" }}
+          className="relative z-10 flex flex-col w-full h-full"
+        >
+          <h2 className="font-serif text-2xl md:text-3xl font-bold text-love-dark text-center mb-1 flex items-center justify-center gap-2">
+            ¿A dónde vamos? 📍
+          </h2>
+        <p className="text-sm text-love-dark/70 text-center mb-6 relative z-10">
           Elegí la opción que más te cope o proponé una nueva.
         </p>
 
         {/* Place Grid */}
-        <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-3 mb-4 md:mb-6">
+        <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-3 mb-4 md:mb-6 relative z-10">
           {invitationConfig.places.map((place) => {
             const isSelected = selectedPlace?.id === place.id && !isCustomLocation;
             return (
@@ -114,7 +133,7 @@ export default function LocationStep({ onBack, onNext, isSending }: LocationStep
         </div>
 
         {/* View / Embed Map or Custom Input */}
-        <div className="min-h-[260px] flex flex-col border border-rose-100 rounded-2xl overflow-hidden bg-rose-50/20 relative shadow-inner">
+        <div className="min-h-[260px] flex flex-col border border-rose-100 rounded-2xl overflow-hidden bg-rose-50/20 relative shadow-inner z-10">
           <AnimatePresence mode="wait">
             {!isCustomLocation && selectedPlace ? (
               /* Google Maps Preview */
@@ -200,7 +219,7 @@ export default function LocationStep({ onBack, onNext, isSending }: LocationStep
         </div>
 
         {/* Navigation Footer */}
-        <div className="mt-8 flex justify-between items-center border-t border-rose-50 pt-4">
+        <div className="mt-8 flex justify-between items-center border-t border-rose-50 pt-4 relative z-10">
           <button
             type="button"
             onClick={onBack}
@@ -230,6 +249,7 @@ export default function LocationStep({ onBack, onNext, isSending }: LocationStep
             )}
           </button>
         </div>
+        </motion.div>
       </motion.div>
     </div>
   );

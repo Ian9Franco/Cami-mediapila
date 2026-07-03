@@ -187,18 +187,37 @@ export default function DateTimeStep({ onBack, onNext }: DateTimeStepProps) {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-white border border-indigo-50 rounded-3xl p-6 md:p-8 shadow-romantic-lg glass-panel relative overflow-hidden"
+        style={{
+          backgroundImage: "url('/2.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
-        {/* Top Accent Line */}
-        <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-love-primary via-love-secondary to-love-gold" />
+        {/* Animated semi-transparent overlay to ensure text readability */}
+        <motion.div 
+          initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+          animate={{ opacity: 0.8, backdropFilter: "blur(1.5px)" }}
+          transition={{ duration: 1.0, delay: 0.6, ease: "easeInOut" }}
+          className="absolute inset-0 bg-white z-0 pointer-events-none"
+        />
 
-        <h2 className="font-serif text-2xl md:text-3xl font-bold text-love-dark text-center mb-1 flex items-center justify-center gap-2">
-          ¿Cuándo nos vemos? 📅
-        </h2>
-        <p className="text-sm text-love-dark/70 text-center mb-6">
+        {/* Top Accent Line */}
+        <div className="absolute top-0 inset-x-0 h-2 rounded-t-3xl chroma-border z-10" />
+
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.4, ease: "easeOut" }}
+          className="relative z-10 flex flex-col w-full h-full"
+        >
+          <h2 className="font-serif text-2xl md:text-3xl font-bold text-love-dark text-center mb-1 flex items-center justify-center gap-2">
+            ¿Cuándo nos vemos? 📅
+          </h2>
+          <p className="text-sm text-love-dark/70 text-center mb-6">
           Elegí los días (marcar hasta 6) y la hora que te queden mejor.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 relative z-10">
           {/* Calendar Section (Left) */}
           <div className="md:col-span-7 flex flex-col">
             <div className="flex justify-between items-center mb-4">
@@ -367,7 +386,7 @@ export default function DateTimeStep({ onBack, onNext }: DateTimeStepProps) {
         </div>
 
         {/* Footer Navigation */}
-        <div className="mt-8 flex justify-between items-center border-t border-indigo-50 pt-4">
+        <div className="mt-8 flex justify-between items-center border-t border-indigo-50 pt-4 relative z-10">
           <button
             type="button"
             onClick={onBack}
@@ -408,6 +427,7 @@ export default function DateTimeStep({ onBack, onNext }: DateTimeStepProps) {
             </motion.div>
           )}
         </AnimatePresence>
+        </motion.div>
       </motion.div>
     </div>
   );

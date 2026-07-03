@@ -56,7 +56,7 @@ export async function POST(request: Request) {
             ¡Hola, <strong>${senderName}</strong>! Te tengo excelentes noticias.
           </p>
           <p style="font-size: 16px; line-height: 1.6; color: #1e1b4b;">
-            <strong>${receiverName}</strong> abrió tu propuesta, aceptó sumarse al plan y completó los detalles en tu sitio web.
+            <strong>${receiverName}</strong> abrió tu propuesta, propuso un plan y completó los detalles en tu sitio web.
           </p>
           
           <div style="background-color: #ffffff; border: 1px solid #e0e7ff; border-radius: 15px; padding: 20px; margin: 25px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">

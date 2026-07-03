@@ -46,7 +46,12 @@
 }
 
 body {
-  background-color: var(--background);
+  background-color: #fff9f9;
+  background-image: 
+    radial-gradient(rgba(244, 63, 94, 0.08) 1.5px, transparent 1.5px), 
+    radial-gradient(rgba(244, 63, 94, 0.08) 1.5px, #fff9f9 1.5px);
+  background-size: 32px 32px;
+  background-position: 0 0, 16px 16px;
   color: var(--foreground);
   font-family: var(--font-outfit), sans-serif;
   overflow-x: hidden;
@@ -65,7 +70,12 @@ body {
 }
 
 .shadow-romantic-lg {
-  box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.22);
+  box-shadow: 
+    0 10px 20px -5px rgba(30, 27, 75, 0.12),
+    0 25px 50px -10px rgba(30, 27, 75, 0.18),
+    0 0 80px -10px rgba(99, 102, 241, 0.08),
+    inset 0 1.5px 0.5px rgba(255, 255, 255, 0.85),
+    inset 0 -1.5px 0.5px rgba(30, 27, 75, 0.04);
 }
 
 /* Custom scrollbar */
@@ -81,4 +91,31 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #6366f1;
+}
+
+/* Animated Chroma Border effect */
+@keyframes chroma-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.chroma-border {
+  background-image: linear-gradient(
+    90deg,
+    #6366f1,
+    #a855f7,
+    #ec4899,
+    #f59e0b,
+    #3b82f6,
+    #6366f1
+  );
+  background-size: 300% 100%;
+  animation: chroma-flow 8s linear infinite;
 }

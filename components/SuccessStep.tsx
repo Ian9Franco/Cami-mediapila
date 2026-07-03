@@ -70,12 +70,20 @@ export default function SuccessStep({
         animate={{ opacity: 1, scale: 1 }}
         transition={{ type: "spring", stiffness: 200, damping: 25 }}
         className="bg-white border border-indigo-100 rounded-3xl p-6 md:p-8 shadow-romantic-lg glass-panel relative overflow-hidden"
+        style={{
+          backgroundImage: "url('/imagen.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
+        {/* Semi-transparent overlay to ensure text readability */}
+        <div className="absolute inset-0 bg-white/80 backdrop-blur-[1.5px] z-0 pointer-events-none" />
+
         {/* Top Accent Line */}
-        <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-love-primary via-love-secondary to-love-gold" />
+        <div className="absolute top-0 inset-x-0 h-2 rounded-t-3xl chroma-border z-10" />
 
         {/* Success Icon */}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-6 relative z-10">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: [0, 1.2, 1] }}
@@ -93,15 +101,15 @@ export default function SuccessStep({
           </motion.div>
         </div>
 
-        <h2 className="font-serif text-3xl font-bold text-love-dark mb-2">
+        <h2 className="font-serif text-3xl font-bold text-love-dark mb-2 relative z-10">
           ¡Hecho! 🥂
         </h2>
-        <p className="text-sm font-semibold text-love-accent/80 mb-6">
+        <p className="text-sm font-semibold text-love-accent/80 mb-6 relative z-10">
           El plan quedó confirmado y se envió por correo.
         </p>
 
         {/* Summary Details */}
-        <div className="bg-slate-50/50 border border-indigo-50 rounded-2xl p-5 mb-6 text-left space-y-4">
+        <div className="bg-white/70 backdrop-blur-[2px] border border-indigo-50/60 rounded-2xl p-5 mb-6 text-left space-y-4 relative z-10">
           <h3 className="text-xs font-bold text-love-accent/70 tracking-widest uppercase mb-1">
             Resumen del Plan
           </h3>
@@ -134,7 +142,7 @@ export default function SuccessStep({
         </div>
 
         {/* Closing Note */}
-        <div className="space-y-4">
+        <div className="space-y-4 relative z-10">
           <p className="text-xs md:text-sm font-medium text-love-dark/70 italic px-4 leading-relaxed">
             "¡Listo Cami! Ya me llegó todo. Agendadísimo... Tengo muchas ganas de que nos veamos para charlar un rato. Te escribo en estos días. ¡Un abrazo!" ✨
           </p>
