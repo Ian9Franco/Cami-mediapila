@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fbfaf8;
+  --foreground: #1e1b4b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  --font-sans: var(--font-outfit), sans-serif;
+  --font-serif: var(--font-playfair), serif;
+
+  /* Redefine romantic colors to a mysterious/intriguing Indigo & Gold theme */
+  --color-love-primary: #6366f1;    /* Modern Indigo */
+  --color-love-secondary: #8b5cf6;  /* Soft Violet */
+  --color-love-accent: #4f46e5;     /* Deep Indigo */
+  --color-love-dark: #1e1b4b;       /* Dark Indigo / Slate */
+  --color-love-light: #e0e7ff;      /* Light Lilac/Indigo */
+  --color-love-cream: #fbfaf8;      /* Warm Premium Cream */
+  --color-love-gold: #f59e0b;       /* Amber Gold */
+  
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-slow: pulse-slow 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(8deg);
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 0.95;
+  }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-outfit), sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom styles for animations and card elements */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+.shadow-romantic {
+  box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.15);
+}
+
+.shadow-romantic-lg {
+  box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.22);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: #a78bfa;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6366f1;
+}
